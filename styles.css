@@ -1,0 +1,144 @@
+body {
+    padding: 40px;
+}
+
+.algorithm-box {
+    border: 1px solid #cad8ef;
+    padding: 2em 1em 1em 1em;
+    margin: auto;
+    position: relative;
+    max-width: 700px;
+}
+
+.algorithm-box:before {
+    display: block;
+    color: #5185bd;
+    font-weight: bold;
+    position: absolute;
+    left: 0.5em;
+    top: 2px;
+}
+
+.algorithm-box.options:before {
+    content: "Options";
+}
+
+.algorithm-box.results:before {
+    content: "Results";
+}
+
+.algorithm-box.results {
+    font-family: monospace;
+    text-align: center;
+}
+
+.algorithm-box.results .best {
+    color: red;
+    position: relative;
+    margin-top: 1.5em;
+}
+
+.algorithm-box.results .best:before {
+    content: "the best solution";
+    display: block;
+    padding: 2px;
+    color: white;
+    background-color: red;
+    position: absolute;
+    width: 100%;
+    max-width: 200px;
+    margin-left: -100px;
+    top: -20px;
+    left: 50%;
+}
+
+.algorithm-box.results .bin {
+    display: block;
+}
+.algorithm-box.results .data {
+    display: block;
+    margin-bottom: 1em;
+}
+
+label {
+    color: #5185bd;
+    display: block;
+}
+
+input {
+    margin-bottom: 1em;
+    padding: 4px;
+    min-width: 100px;
+}
+
+input + small {
+    display: block;
+    margin-top: -1em;
+    color: #999999;
+    margin-bottom: 1em;
+}
+
+.column-small input {
+    width: 60px;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+}
+
+.column-small {
+    float: left;
+    width: 25%;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+    .column {
+        width: 100%;
+    }
+    .column-small {
+        width: 50%;
+    }
+
+    input[type="button"] {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 400px) {
+    .column-small {
+        width: 100%;
+    }
+    .algorithm-box.results .best:before {
+        margin-left: 0;
+        left: 0;
+    }
+}
+
+.clear {
+    clear: left;
+    line-height: 0;
+    padding: 0;
+    margin: 0;
+    width: 0;
+    height: 0;
+}
+
+.full-width {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="button"] {
+    padding: 1em 2em;
+    border: 1px solid #5185bd;
+    color: #5185bd;
+    background-color: white;
+    cursor: pointer;
+}
+
+input[type="button"]:hover {
+    color: #5185bd;
+    background-color: #e5f0fa;
+}

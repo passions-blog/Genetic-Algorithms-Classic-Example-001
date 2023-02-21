@@ -3,13 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <title>Genetic Algorithms: Classic version implementation example [001]</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script type="application/javascript" src="vis-graph3d.min.js"></script>
+    <script type="application/javascript" src="math.js"></script>
+    <script type="application/javascript" src="genetic-algorithms.helpers.js"></script>
+    <script type="application/javascript" src="algorithm.js"></script>
 </head>
 <body>
 <script>
+    function execute() {
+        var populationResult = run({
+            evalFunction: document.getElementById('eval_fn').value,
+            variableSize: parseInt(document.getElementById('var_size').value),
+            popSize: parseInt(document.getElementById('pop_size').value),
+            selCount: parseInt(document.getElementById('selection_count').value),
+            maxGenerations: parseInt(document.getElementById('generations_count').value),
+            maximize: document.getElementById('maximize').checked || false,
+            pc: parseFloat(document.getElementById('pc').value),
+            pm: parseFloat(document.getElementById('pm').value),
+            x1: parseFloat(document.getElementById('xmin').value),
+            xn: parseFloat(document.getElementById('xmax').value),
+            y1: parseFloat(document.getElementById('ymin').value),
+            yn: parseFloat(document.getElementById('ymax').value)
+        });
 
+        var resultsElement = document.getElementById('results');
+        resultsElement.innerHTML = '';
+        for (var i = 0; i < populationResult.length; i++) {
+            var box = document.createElement('div');
+            var c = populationResult[i];
+            if (i ===0) {
+                box.className = 'best';
+            }
+            box.innerHTML = '<span class="bin">['+(i < 9 ? ' ' + (i+1) : i+1)+'.] ' + c.genes.join(' ') + '</span><span class="data">x = '
+                + c.x.toFixed(7) + ' y = ' + c.y.toFixed(7) + ' f(x,y) = ' + c.eval.toFixed(7) + '</span>';
+            resultsElement.appendChild(box);
+        }
+    }
 </script>
 
-This will be a test, or not test...
+<div class="algorithm-box options">
+    <label for="eval_fn">Objective function</label>
+    <input class="full-width" type="text" value="x * sin(y) + y * sin(x)" id="eval_fn">
+
+    <div class="column-small">
+        <label for="xmin">x<sub>min</sub></label>
+        <input type="number" value="0" id="xmin">
+    </div>
+    <div class="column-small">
+        <label for="xmax">x<sub>max</sub></label>
+        <input type="number" value="8" id="xmax">
+    </div>
+    <div class="column-small">
+        <label for="ymin">y<sub>min</sub></label>
+        <input type="number" value="0" id="ymin">
+    </div>
+    <div class="column-small">
+        <label for="ymax">y<sub>max</sub></label>
+        <input type="number" value="8" id="ymax">
+    </div>
+    <br class="clear">
+
+    <div class="column">
+        <label for="pop_size">Population size</label>
+        <input type="number" min="5" max="1000" value="25" id="pop_size">
+    </div>
+    <div class="column">
+        <label for="generations_count">Generations</label>
+        <input type="number" min="1" max="10000" value="50" id="generations_count">
+        <small>Number of iterations.</small>
+    </div>
+    <br class="clear">
+
+    <div class="column">
+        <label for="var_size">Binary variable size</label>
+        <input type="number" min="2" max="32" value="13" id="var_size">
+        <small>Number of bits encoding single variable.</small>
+    </div>
+    <div class="column">
+        <label for="selection_count">Selection count</label>
+        <input type="number" min="1" max="999" value="15" id="selection_count">
+        <small>Number of the best solutions that are selected during selection (population is trimmed to this number
+            after selection). Value should be lower than population size.</small>
+    </div>
+    <br class="clear">
+
+    <div class="column">
+        <label for="pc">Crossover probability</label>
+        <input type="number" min="0" max="1" value="0.5" id="pc">
+    </div>
+    <div class="column">
+        <label for="pm">Mutation probability</label>
+        <input type="number" min="0" max="1" value="0.25" id="pm">
+    </div>
+    <br class="clear">
+
+    <div class="column">
+        <label for="maximize">Maximize function</label>
+        <input type="checkbox" id="maximize" checked="checked">
+    </div>
+    <div class="column">
+        <input type="button" id="execute" value="Execute >>" onclick="execute()">
+    </div>
+    <br class="clear">
+</div>
+
+<div class="algorithm-box results" id="results">
+
+</div>
 
 </body>
 </html>
