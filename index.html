@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Genetic Algorithms: Classic version implementation example [001]</title>
     <link href="styles.css" rel="stylesheet"/>
-    <script type="application/javascript" src="https://raw.githubusercontent.com/passions-blog/Genetic-Algorithms-Classic-Example-001/7d746e334f8e6bf76d44fd56ff17dfb6e476d6cf/math.js"></script>
+    <script type="application/javascript" src="math.js"></script>
     <script type="application/javascript" src="ga.helpers.js"></script>
     <script type="application/javascript" src="ga-classic.js"></script>
 </head>
@@ -31,13 +31,33 @@
         for (var i = 0; i < populationResult.length; i++) {
             var box = document.createElement('div');
             var c = populationResult[i];
-            if (i ===0) {
+            if (i === 0) {
                 box.className = 'best';
             }
-            box.innerHTML = '<span class="bin">['+(i < 9 ? ' ' + (i+1) : i+1)+'.] ' + c.genes.join(' ') + '</span><span class="data">x = '
+            box.innerHTML = '<span class="bin">[' + (i < 9 ? ' ' + (i + 1) : i + 1) + '.] ' + c.genes.join(' ') + '</span><span class="data">x = '
                 + c.x.toFixed(7) + '&nbsp;&nbsp;y = ' + c.y.toFixed(7) + '&nbsp;&nbsp;f(x,y) = ' + c.eval.toFixed(7) + '</span>';
             resultsElement.appendChild(box);
         }
+    }
+</script>
+<script type="text/javascript">
+    // send information to parent about the size changes of content
+    if (self !== top) {
+        var rootHeight;
+        setInterval(function () {
+                var rootElement = document.getElementsByTagName('body');
+                if (rootElement) {
+                    var currentRootHeight = rootElement.offsetHeight;
+                    //Only send values if height has changed since last time
+                    if (rootHeight !== currentRootHeight) {
+                        //postMessage to set iframe height
+                        window.parent.postMessage({'type': 'frame-resized', 'value': currentRootHeight}, '*');
+                        rootHeight = currentRootHeight;
+                    }
+                }
+            },
+            1000
+        );
     }
 </script>
 
