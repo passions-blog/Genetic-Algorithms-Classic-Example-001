@@ -29,6 +29,8 @@ body {
 
 .algorithm-box.results {
     text-align: center;
+    height: 300px;
+    overflow: auto;
 }
 
 .algorithm-box.results .best {
