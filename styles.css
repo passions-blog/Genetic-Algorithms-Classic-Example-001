@@ -28,7 +28,6 @@ body {
 }
 
 .algorithm-box.results {
-    font-family: monospace;
     text-align: center;
 }
 
@@ -54,10 +53,12 @@ body {
 
 .algorithm-box.results .bin {
     display: block;
+    font-family: monospace;
 }
 .algorithm-box.results .data {
     display: block;
     margin-bottom: 1em;
+    font-family: monospace;
 }
 
 label {

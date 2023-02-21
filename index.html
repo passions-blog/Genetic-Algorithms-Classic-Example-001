@@ -36,7 +36,7 @@
                 box.className = 'best';
             }
             box.innerHTML = '<span class="bin">['+(i < 9 ? ' ' + (i+1) : i+1)+'.] ' + c.genes.join(' ') + '</span><span class="data">x = '
-                + c.x.toFixed(7) + ' y = ' + c.y.toFixed(7) + ' f(x,y) = ' + c.eval.toFixed(7) + '</span>';
+                + c.x.toFixed(7) + '&nbsp;&nbsp;y = ' + c.y.toFixed(7) + '&nbsp;&nbsp;f(x,y) = ' + c.eval.toFixed(7) + '</span>';
             resultsElement.appendChild(box);
         }
     }
@@ -108,9 +108,7 @@
     <br class="clear">
 </div>
 
-<div class="algorithm-box results" id="results">
-
-</div>
+<div class="algorithm-box results" id="results"></div>
 
 </body>
 </html>
