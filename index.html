@@ -9,6 +9,28 @@
     <script type="application/javascript" src="ga-classic.js"></script>
 </head>
 <body>
+<script type="text/javascript">
+    var rootHeight;
+    function sendResizeFrameEvent() {
+        if (self !== top) {
+            var rootElement = document.getElementById('algorithmControls');
+            if (rootElement) {
+                var currentRootHeight = rootElement.offsetHeight;
+                //Only send values if height has changed since last time
+                if (rootHeight !== currentRootHeight) {
+                    //postMessage to set iframe height
+                    window.parent.postMessage({'type': 'frame-resized', 'value': currentRootHeight}, '*');
+                    rootHeight = currentRootHeight;
+                }
+            }
+        }
+    }
+
+    // send information to parent about the size changes of content
+    if (self !== top) {
+        setInterval(sendResizeFrameEvent, 1000);
+    }
+</script>
 <script>
     function execute() {
         var populationResult = run({
@@ -38,26 +60,9 @@
                 + c.x.toFixed(7) + '&nbsp;&nbsp;y = ' + c.y.toFixed(7) + '&nbsp;&nbsp;f(x,y) = ' + c.eval.toFixed(7) + '</span>';
             resultsElement.appendChild(box);
         }
-    }
-</script>
-<script type="text/javascript">
-    // send information to parent about the size changes of content
-    if (self !== top) {
-        var rootHeight;
-        setInterval(function () {
-                var rootElement = document.getElementById('algorithmControls');
-                if (rootElement) {
-                    var currentRootHeight = rootElement.offsetHeight;
-                    //Only send values if height has changed since last time
-                    if (rootHeight !== currentRootHeight) {
-                        //postMessage to set iframe height
-                        window.parent.postMessage({'type': 'frame-resized', 'value': currentRootHeight}, '*');
-                        rootHeight = currentRootHeight;
-                    }
-                }
-            },
-            1000
-        );
+
+        // refresh parent frame size
+        sendResizeFrameEvent();
     }
 </script>
 
