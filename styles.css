@@ -27,6 +27,10 @@ body {
     content: "Results";
 }
 
+.algorithm-box.visualization:before {
+    content: "Function visualization";
+}
+
 .algorithm-box.results {
     text-align: center;
 }

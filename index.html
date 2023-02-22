@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Genetic Algorithms: Classic version implementation example [001]</title>
     <link href="styles.css" rel="stylesheet"/>
+    <script type="application/javascript" src="vis-graph3d.min.js"></script>
     <script type="application/javascript" src="math.js"></script>
     <script type="application/javascript" src="ga.helpers.js"></script>
     <script type="application/javascript" src="ga-classic.js"></script>
@@ -30,10 +31,95 @@
     if (self !== top) {
         setInterval(sendResizeFrameEvent, 1000);
     }
-</script>
-<script>
+
+    var visualizationsExecuted = {};
+    var visualizationsTimeoutHandlers = {};
+
+    /* Renders 3D graph in Post */
+    function renderVisualizationGraph(settings) {
+        var data = null;
+        var graph = null;
+
+        // Create and populate a data table.
+        data = new vis.DataSet();
+        // create some nice looking data with sin/cos
+        var counter = 0;
+        var xsize = Math.abs(settings.x2 - settings.x1);
+        var ysize = Math.abs(settings.y2 - settings.y1);
+        var step = Math.min(xsize, ysize) / 60;
+        for (var x = settings.x1; x < settings.x2; x += step) {
+            for (var y = settings.y1; y < settings.y2; y += step) {
+                var value = settings.fx(x, y);
+                data.add({id: counter++, x: x, y: y, z: value, style: value});
+            }
+        }
+
+        // specify options
+        var options = {
+            width: settings.width || '100%',
+            height: settings.height || '600px',
+            style: settings.style || 'surface',
+            showPerspective: settings.showPerspective,
+            showGrid: settings.showGrid,
+            showShadow: settings.showShadow,
+            keepAspectRatio: true,
+            verticalRatio: 0.5,
+            showLegend: false,
+            tooltip: function (point) {
+                return '(x,y) = <b>(' + point.x.toFixed(3) + ', ' + point.y.toFixed(3) + ')</b><br>f(x,y) = ' + point.z.toFixed(3);
+            },
+            tooltipStyle: {
+                content: {
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    padding: '10px',
+                    borderRadius: '10px'
+                },
+                line: {
+                    borderLeft: '1px dotted rgba(0, 0, 0, 0.5)'
+                },
+                dot: {
+                    border: '5px solid rgba(0, 0, 0, 0.5)'
+                }
+            }
+        };
+
+        // Instantiate our graph object.
+        var container = document.getElementById(settings.id);
+        graph = new vis.Graph3d(container, data, options);
+
+        // make sure that the chart is responsive
+        if (!visualizationsExecuted[settings.id]) {
+            visualizationsExecuted[settings.id] = true;
+
+            var resizeObserver = new ResizeObserver(function (entries) {
+                var entry = entries[0];
+                var w = entry.contentRect.width;
+                var newSettings = Object.assign({}, settings);
+
+                if (w < 600) {
+                    newSettings.width = '100%';
+                    newSettings.height = w.toString() + 'px';
+                }
+
+                if (visualizationsTimeoutHandlers[settings.id]) {
+                    clearTimeout(visualizationsTimeoutHandlers[settings.id]);
+                }
+
+                visualizationsTimeoutHandlers[settings.id] = setTimeout(
+                    function () {
+                        visualizationsTimeoutHandlers[settings.id] = undefined;
+                        renderVisualizationGraph(newSettings);
+                    },
+                    500
+                );
+            });
+
+            resizeObserver.observe(container);
+        }
+    }
+
     function execute() {
-        var populationResult = run({
+        var params = {
             evalFunction: document.getElementById('eval_fn').value,
             variableSize: parseInt(document.getElementById('var_size').value),
             popSize: parseInt(document.getElementById('pop_size').value),
@@ -46,7 +132,8 @@
             xn: parseFloat(document.getElementById('xmax').value),
             y1: parseFloat(document.getElementById('ymin').value),
             yn: parseFloat(document.getElementById('ymax').value)
-        });
+        };
+        var populationResult = run(params);
 
         var resultsElement = document.getElementById('results');
         resultsElement.innerHTML = '';
@@ -63,7 +150,21 @@
 
         // refresh parent frame size
         sendResizeFrameEvent();
+
+        renderVisualizationGraph({
+            id: 'functionVisualization',
+            fx: function fx(x, y) {
+                return math.evaluate(params.evalFunction, {
+                    x: x, y: y
+                });
+            },
+            x1: params.x1, x2: params.xn,
+            y1: params.y1, y2: params.yn,
+            step: 0.2
+        });
     }
+
+
 </script>
 
 <div id="algorithmControls">
@@ -132,6 +233,8 @@
         </div>
         <br class="clear">
     </div>
+
+    <div class="algorithm-box visualization" id="functionVisualization"></div>
 
     <div class="algorithm-box results" id="results"></div>
 </div>
