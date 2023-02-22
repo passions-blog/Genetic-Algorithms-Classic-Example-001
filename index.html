@@ -46,7 +46,7 @@
         var counter = 0;
         var xsize = Math.abs(settings.x2 - settings.x1);
         var ysize = Math.abs(settings.y2 - settings.y1);
-        var step = Math.min(xsize, ysize) / 60;
+        var step = Math.min(xsize, ysize) / 50;
         for (var x = settings.x1; x < settings.x2; x += step) {
             for (var y = settings.y1; y < settings.y2; y += step) {
                 var value = settings.fx(x, y);
@@ -159,8 +159,7 @@
                 });
             },
             x1: params.x1, x2: params.xn,
-            y1: params.y1, y2: params.yn,
-            step: 0.2
+            y1: params.y1, y2: params.yn
         });
     }
 
