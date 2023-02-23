@@ -14,7 +14,7 @@
     var rootHeight;
     function sendResizeFrameEvent() {
         if (self !== top) {
-            var rootElement = document.getElementById('algorithmControls');
+            var rootElement = document.getElementById('widget');
             if (rootElement) {
                 var currentRootHeight = rootElement.offsetHeight;
                 //Only send values if height has changed since last time
@@ -34,19 +34,19 @@
 
     var visualizationsExecuted = {};
     var visualizationsTimeoutHandlers = {};
+    var graph = null;
 
     /* Renders 3D graph in Post */
     function renderVisualizationGraph(settings) {
         var data = null;
-        var graph = null;
 
         // Create and populate a data table.
         data = new vis.DataSet();
         // create some nice looking data with sin/cos
         var counter = 0;
-        var xsize = Math.abs(settings.x2 - settings.x1);
-        var ysize = Math.abs(settings.y2 - settings.y1);
-        var step = Math.min(xsize, ysize) / 50;
+        // var xsize = Math.abs(settings.x2 - settings.x1);
+        // var ysize = Math.abs(settings.y2 - settings.y1);
+        var step = parseFloat(document.getElementById('precision').value);
         for (var x = settings.x1; x < settings.x2; x += step) {
             for (var y = settings.y1; y < settings.y2; y += step) {
                 var value = settings.fx(x, y);
@@ -57,7 +57,7 @@
         // specify options
         var options = {
             width: settings.width || '100%',
-            height: settings.height || '600px',
+            height: settings.height || '700px',
             style: settings.style || 'surface',
             showPerspective: settings.showPerspective,
             showGrid: settings.showGrid,
@@ -108,7 +108,7 @@
                 visualizationsTimeoutHandlers[settings.id] = setTimeout(
                     function () {
                         visualizationsTimeoutHandlers[settings.id] = undefined;
-                        renderVisualizationGraph(newSettings);
+                        graph.redraw();
                     },
                     500
                 );
@@ -133,23 +133,6 @@
             y1: parseFloat(document.getElementById('ymin').value),
             yn: parseFloat(document.getElementById('ymax').value)
         };
-        var populationResult = run(params);
-
-        var resultsElement = document.getElementById('results');
-        resultsElement.innerHTML = '';
-        for (var i = 0; i < populationResult.length; i++) {
-            var box = document.createElement('div');
-            var c = populationResult[i];
-            if (i === 0) {
-                box.className = 'best';
-            }
-            box.innerHTML = '<span class="bin">[' + (i < 9 ? ' ' + (i + 1) : i + 1) + '.] ' + c.genes.join(' ') + '</span><span class="data">x = '
-                + c.x.toFixed(7) + '&nbsp;&nbsp;y = ' + c.y.toFixed(7) + '&nbsp;&nbsp;f(x,y) = ' + c.eval.toFixed(7) + '</span>';
-            resultsElement.appendChild(box);
-        }
-
-        // refresh parent frame size
-        sendResizeFrameEvent();
 
         renderVisualizationGraph({
             id: 'functionVisualization',
@@ -161,15 +144,72 @@
             x1: params.x1, x2: params.xn,
             y1: params.y1, y2: params.yn
         });
+
+        var resultsElement = document.getElementById('results');
+        resultsElement.innerHTML = '';
+
+        document.getElementById('widget').classList.add('progress');
+        var populationResult = run(params);
+
+        setTimeout(function() {
+            document.getElementById('widget').classList.remove('progress');
+            for (var i = 0; i < populationResult.length; i++) {
+                var box = document.createElement('div');
+                var c = populationResult[i];
+                if (i === 0) {
+                    box.className = 'best';
+                }
+                box.innerHTML = '<span class="bin">[' + (i < 9 ? ' ' + (i + 1) : i + 1) + '.] ' + c.genes.join(' ') + '</span><span class="data">x = '
+                    + c.x.toFixed(7) + '&nbsp;&nbsp;y = ' + c.y.toFixed(7) + '&nbsp;&nbsp;f(x,y) = ' + c.eval.toFixed(7) + '</span>';
+                resultsElement.appendChild(box);
+            }
+
+            // refresh parent frame size
+            sendResizeFrameEvent();
+        }, 1000);
     }
 
+    function visHeaderClick() {
+        var header = document.getElementById('functionVisualizationHeader');
+        var funcVis = document.getElementById('functionVisualization');
+        if (header.classList.contains('collapsed')) {
+            header.classList.remove('collapsed');
+            funcVis.classList.remove('collapsed');
+        } else {
+            header.classList.add('collapsed');
+            funcVis.classList.add('collapsed');
+        }
 
+        if (graph) {
+            graph.redraw();
+        }
+    }
+
+    function resultsHeaderClick() {
+        var header = document.getElementById('resultsHeader');
+        var container = document.getElementById('results');
+        if (header.classList.contains('collapsed')) {
+            header.classList.remove('collapsed');
+            container.classList.remove('collapsed');
+        } else {
+            header.classList.add('collapsed');
+            container.classList.add('collapsed');
+        }
+    }
 </script>
 
-<div id="algorithmControls">
+<div id="widget">
     <div class="algorithm-box options">
-        <label for="eval_fn">Objective function</label>
-        <input class="full-width" type="text" value="x * sin(y) + y * sin(x)" id="eval_fn">
+        <div class="column34">s
+            <label for="eval_fn">Objective function</label>
+            <input class="full-width" type="text" value="x * sin(y) + y * sin(x)" id="eval_fn">
+        </div>
+        <div class="column-small">
+            <label for="precision">Graph precision</label>
+            <input type="number" value="0.2" id="precision">
+            <small>Smaller = better quality.</small>
+        </div>
+        <br class="clear">
 
         <div class="column-small">
             <label for="xmin">x<sub>min</sub></label>
@@ -233,9 +273,10 @@
         <br class="clear">
     </div>
 
-    <div class="algorithm-box visualization" id="functionVisualization"></div>
-
-    <div class="algorithm-box results" id="results"></div>
+    <div class="algorithm-box box-header" id="functionVisualizationHeader" onclick="visHeaderClick()">Function visualization</div>
+    <div class="algorithm-box box visualization" id="functionVisualization"></div>
+    <div class="algorithm-box box-header" id="resultsHeader" onclick="resultsHeaderClick()">Results</div>
+    <div class="algorithm-box box results progress" id="results"></div>
 </div>
 </body>
 </html>

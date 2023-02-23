@@ -6,15 +6,30 @@
  * @returns {number} Result is a decimal number.
  */
 function binaryArrayToNumber(binaryArray) {
-    var num = 0;
+    var result = 0;
     var exponent = binaryArray.length - 1;
     for (var i = 0; i < binaryArray.length; i++) {
         if (binaryArray[i]) {
-            num += Math.pow(2, exponent);
+            result += Math.pow(2, exponent);
         }
         exponent--;
     }
-    return num;
+    return result;
+}
+
+/**
+ * Converts a decimal number into binary array of fixed length.
+ * @param decimalValue The value to convert.
+ * @param v1 The first value in available decimal range (x1, y1...)
+ * @param vn The last value in available decimal range (xn, yn...)
+ * @param variableSize The number of bits to represents the {@param decimalValue}.
+ * @returns {number[]} Binary array representing {@param decimalValue}.
+ */
+function numberToBinaryArray(decimalValue, v1, vn, variableSize) {
+    var binaryString = decimalValue.toString(2);
+    var missingNumberOfZeroes = variableSize - binaryString.length;
+    binaryString = Array(missingNumberOfZeroes + 1).join('0') + binaryString;
+    return Array.from(binaryString.split(''), Number);
 }
 
 /**
@@ -55,7 +70,7 @@ function decodeBinaryChromosome(binaryArray, numberOfVariables, ranges) {
  * Encodes given variables into binary array of given ranges, with fixed number of bits for each of variables.
  * @param values Floating point values to be encoded.
  * @param variableSize Size of the single variable in bits.
- * @param ranges An array of two element arrays containing ranges of values,
+ * @param ranges An array of two-element arrays containing ranges of values,
  * first element in each array is starting value, second element is ending value.
  * @returns {number[]} An array of 0,1 values representing a chromosome.
  */

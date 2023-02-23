@@ -8,6 +8,7 @@ body {
     padding: 2em 1em 1em 1em;
     position: relative;
     max-width: 700px;
+    box-sizing: border-box;
 }
 
 .algorithm-box:before {
@@ -19,20 +20,53 @@ body {
     top: 2px;
 }
 
+.algorithm-box.box.collapsed {
+    overflow: hidden;
+    height: 0;
+    padding: 0;
+}
+
 .algorithm-box.options:before {
     content: "Options";
 }
 
-.algorithm-box.results:before {
-    content: "Results";
+.visualization {
+    border-top: none;
+    padding: 0;
 }
 
-.algorithm-box.visualization:before {
-    content: "Function visualization";
+.box-header {
+    border-bottom: none;
+    padding: 0.5em;
+    color: #5185bd;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.box-header:hover {
+    color: #5185bd;
+    background-color: #e5f0fa;
+}
+
+.box-header:after {
+    content: "";
+    background-image: url('chevron.png');
+    background-position: center center;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 4px;
+    top: 8px;
+    transform:rotate(180deg);
+}
+
+.box-header.collapsed:after {
+    transform:rotate(0deg);
 }
 
 .algorithm-box.results {
     text-align: center;
+    background-color: #aadff7;
 }
 
 .algorithm-box.results .best {
@@ -63,6 +97,13 @@ body {
     display: block;
     margin-bottom: 1em;
     font-family: monospace;
+    background-image: none;
+}
+
+.progress .algorithm-box.results {
+    background-image: url(dna-progress.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 label {
@@ -93,14 +134,28 @@ input + small {
     box-sizing: border-box;
 }
 
+.column34 {
+    float: left;
+    width: 75%;
+    box-sizing: border-box;
+}
+
 .column-small {
     float: left;
     width: 25%;
     box-sizing: border-box;
 }
 
+.full-width {
+    width: 90%;
+    box-sizing: border-box;
+}
+
 @media screen and (max-width: 600px) {
-    .column {
+    .column, .column34 {
+        width: 100%;
+    }
+    .full-width {
         width: 100%;
     }
     .column-small {
@@ -128,11 +183,6 @@ input + small {
     margin: 0;
     width: 0;
     height: 0;
-}
-
-.full-width {
-    width: 100%;
-    box-sizing: border-box;
 }
 
 input[type="button"] {
