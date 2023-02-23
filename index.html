@@ -183,6 +183,9 @@
         if (graph) {
             graph.redraw();
         }
+
+        // refresh parent frame size
+        sendResizeFrameEvent();
     }
 
     function resultsHeaderClick() {
@@ -195,6 +198,9 @@
             header.classList.add('collapsed');
             container.classList.add('collapsed');
         }
+
+        // refresh parent frame size
+        sendResizeFrameEvent();
     }
 </script>
 
