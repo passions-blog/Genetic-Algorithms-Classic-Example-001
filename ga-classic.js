@@ -79,7 +79,7 @@ function cloneChromosome(chromosome) {
 
 /**
  * Creates a new population of chromosomes.
- * @returns {*[]}
+ * @returns {[]} An array of new random chromosomes.
  */
 function createPopulation() {
     var population = [];
@@ -116,7 +116,7 @@ function selection(trim) {
 }
 
 /**
- * Generates new chromosomes by crossover until population has again the initial number of chromosomes.
+ * Generates new chromosomes by crossover (extends population).
  */
 function crossover() {
     var parents = [];
@@ -174,6 +174,11 @@ function crossover() {
     }
 }
 
+/**
+ * Randomly introduce mutated genes into new chromosomes.
+ * Mutation is done only for new child chromosomes, that are beyond
+ * original population size.
+ */
 function mutation() {
     // mutate only children
     for (var i = POPULATION_SIZE - 1; i < population.length; i++) {
@@ -186,6 +191,9 @@ function mutation() {
     }
 }
 
+/**
+ * Calculate each chromosome fitness.
+ */
 function evaluation() {
     for (var i = 0; i < population.length; i++) {
         fxy(population[i]);
@@ -225,7 +233,7 @@ function run(options) {
         generation++;
     }
 
-    // 3. sort population and get the best individual
+    // 3. Sort population and get the best individual
     selection();
 
     return population;
