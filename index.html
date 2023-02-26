@@ -59,9 +59,9 @@
             width: settings.width || '100%',
             height: settings.height || '700px',
             style: settings.style || 'surface',
-            showPerspective: settings.showPerspective,
-            showGrid: settings.showGrid,
-            showShadow: settings.showShadow,
+            showPerspective: true,
+            showGrid: true,
+            showShadow: false,
             keepAspectRatio: true,
             verticalRatio: 0.5,
             showLegend: false,
@@ -241,7 +241,7 @@
         </div>
         <div class="column">
             <label for="generations_count">Generations</label>
-            <input type="number" min="1" max="10000" value="50" id="generations_count">
+            <input type="number" min="1" max="10000" value="30" id="generations_count">
             <small>Number of iterations.</small>
         </div>
         <br class="clear">

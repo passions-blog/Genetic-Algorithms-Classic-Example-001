@@ -112,77 +112,76 @@ function selection(trim) {
     });
 
     // select only the best chromosomes, remove the rest from population
-    population = population.slice(0, SELECTION_COUNT);
+    population = population.slice(0, POPULATION_SIZE);
 }
 
 /**
  * Generates new chromosomes by crossover until population has again the initial number of chromosomes.
  */
 function crossover() {
-    var chromosomesToFind = POPULATION_SIZE - population.length;
-    var newChromosomes = [];
     var parents = [];
-
-    // this is not the best approach, but easy to implement
-    // We go through the population and choose or not parents
-    // After we found two parents we create a child chromosome and add it to newChromosomes
-    // this repeats until we will find all required chromosomes
-    while (newChromosomes.length < chromosomesToFind) {
-        for (var i = 0; i < population.length; i++) {
-            // console.log('population ' + i);
-
-            if (parents.length === 1 && parents[0] === i) {
-                continue; // skip already used parent
-            }
-
-            if (Math.random() < CROSSOVER_PROBABILITY) {
-                parents.push(i);
-                // console.log('CROSS PARENT');
-            }
-
-            if (parents.length === 2) {
-                // crossover parents
-                var crossingPoint = getRandomInt(1, CHROMOSOME_SIZE - 2);// from 1 to make crossover up to one less than last one
-                var chromosomeA = cloneChromosome(population[parents[0]]);
-                var chromosomeB = cloneChromosome(population[parents[1]]);
-
-                var a1 = chromosomeA.genes.slice(0, crossingPoint);
-                var a2 = chromosomeA.genes.slice(crossingPoint);
-                var b1 = chromosomeB.genes.slice(0, crossingPoint);
-                var b2 = chromosomeB.genes.slice(crossingPoint);
-
-                chromosomeA.genes = a1.concat(b2);
-                chromosomeB.genes = b1.concat(a2);
-
-                // clear old information about position and eval in chromosomes
-                chromosomeA.x = undefined;
-                chromosomeA.y = undefined;
-                chromosomeA.eval = undefined;
-                chromosomeB.x = undefined;
-                chromosomeB.y = undefined;
-                chromosomeB.eval = undefined;
-
-                newChromosomes.push(chromosomeA);
-                newChromosomes.push(chromosomeB);
-                parents = [];
-            }
+    for (var i = 0; i < population.length; i++) {
+        if (parents.indexOf(i) >= 0) {
+            continue; // skip already selected parent
+        }
+        if (Math.random() < CROSSOVER_PROBABILITY) {
+            parents.push(i);
         }
     }
 
-    population = population.concat(newChromosomes);
+    // if odd number of parents choose one more
+    var index = -1;
+    while (parents.length % 2 === 1) {
+        index++;
+        index = index === population.length ? 0 : index;
 
-    // here the population size may be bigger by one chromosome than default one, that's acceptable,
-    // selection will work as expected
+        // select another parent
+        if (parents.indexOf(index) >= 0) {
+            continue; // skip already selected parent
+        }
+        if (Math.random() < CROSSOVER_PROBABILITY) {
+            parents.push(index);
+            break;
+        }
+
+    }
+
+    // crossover parents and extend population by new children
+    for (var i = 0; i < parents.length; i+=2) {
+        // crossover parents
+        var crossingPoint = getRandomInt(1, CHROMOSOME_SIZE - 2);// from 1 to make crossover up to one less than last one
+        var chromosomeA = cloneChromosome(population[parents[i]]);
+        var chromosomeB = cloneChromosome(population[parents[i+1]]);
+
+        var a1 = chromosomeA.genes.slice(0, crossingPoint);
+        var a2 = chromosomeA.genes.slice(crossingPoint);
+        var b1 = chromosomeB.genes.slice(0, crossingPoint);
+        var b2 = chromosomeB.genes.slice(crossingPoint);
+
+        chromosomeA.genes = a1.concat(b2);
+        chromosomeB.genes = b1.concat(a2);
+
+        // clear old information about position and eval in chromosomes
+        chromosomeA.x = undefined;
+        chromosomeA.y = undefined;
+        chromosomeA.eval = undefined;
+        chromosomeB.x = undefined;
+        chromosomeB.y = undefined;
+        chromosomeB.eval = undefined;
+
+        population.push(chromosomeA);
+        population.push(chromosomeB);
+    }
 }
 
 function mutation() {
-    for (var i = 0; i < population.length; i++) {
+    // mutate only children
+    for (var i = POPULATION_SIZE - 1; i < population.length; i++) {
         var shouldMutate = Math.random() < MUTATION_PROBABILITY;
         if (shouldMutate) {
             // choose gene to mutate
             var geneIndex = getRandomInt(0, CHROMOSOME_SIZE - 1);
             population[i].genes[geneIndex] = getRandomInt(0, 1); // random value 0 or 1 - mutation
-            // fxy(population[i]);
         }
     }
 }
@@ -219,10 +218,10 @@ function run(options) {
     // 2. Start calculations
     var generation = 0;
     while (generation < MAX_GENERATIONS) {
-        selection(); // decrease number of chromosomes
         crossover(); // generates new chromosomes to fill in population
         mutation(); // mutate random genes in chosen chromosomes
         evaluation(); // make sure everything is calculated correctly after all operators
+        selection(); // leave only the best solutions and limit population back to fixed size
         generation++;
     }
 
