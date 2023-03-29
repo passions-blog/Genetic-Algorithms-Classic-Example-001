@@ -161,10 +161,6 @@ input + small {
     .column-small {
         width: 50%;
     }
-
-    input[type="button"] {
-        width: 100%;
-    }
 }
 @media screen and (max-width: 400px) {
     .column-small {
@@ -187,13 +183,13 @@ input + small {
 
 input[type="button"] {
     padding: 1em 2em;
-    border: 1px solid #5185bd;
-    color: #5185bd;
-    background-color: white;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    background-color: #0082b5;
     cursor: pointer;
+    width: 100%;
 }
 
 input[type="button"]:hover {
-    color: #5185bd;
-    background-color: #e5f0fa;
+    background-color: #004f72;
 }
