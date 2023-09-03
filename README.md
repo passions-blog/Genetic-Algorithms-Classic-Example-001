@@ -27,4 +27,4 @@ to the parent page so you can handle it and automatically resize the IFRAME tag.
 
 The code is safe and simple.
 
-Please visit my blog to find out more about Genetic Algorithms: https://portfolio.porombka.pl.
+Please visit my blog to find out more about Genetic Algorithms: [https://portfolio.porombka.pl](https://portfolio.porombka.pl/index.php/category/blog/genetic-algorithms/).
